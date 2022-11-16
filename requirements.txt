@@ -1,0 +1,6 @@
+torch==1.13.0
+torchvision==0.14.0
+matplotlib==3.6.2
+
+black==22.10.0
+isort==5.10.1
