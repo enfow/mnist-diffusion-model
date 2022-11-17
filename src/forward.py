@@ -1,7 +1,9 @@
+from typing import Tuple
+
 import torch
 import torch.nn.functional as F
 
-from dataset import generate_dataset
+from dataset import generate_dataloader
 from util import show_images
 
 
@@ -10,13 +12,20 @@ def linear_beta_schedule(steps, start=0.0001, end=0.02):
 
 
 def generate_noised_samples(
-    x_0: torch.Tensor, steps: int, beta_start: float = 0.0001, beta_end: float = 0.02
-):
+    x_0: torch.Tensor,
+    step: int,
+    total_steps: int,
+    beta_start: float = 0.0001,
+    beta_end: float = 0.02
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """Generate noised samples for diffusion model forward process.
 
     Params
     ------
-    x_0: torch.Tensor, shape (0, 28, 28)
+    x_0: torch.Tensor, shape (BATCH_SIZE, 0, 28, 28)
+        original image
+    steps: int
+        number of noising steps
 
     Returns
     -------
@@ -44,7 +53,7 @@ def generate_noised_samples(
 
     noise = torch.randn_like(x_0)
 
-    betas = linear_beta_schedule(steps=steps, start=0.0001, end=0.02)
+    betas = linear_beta_schedule(steps=total_steps, start=0.0001, end=0.02)
     cummulative_betas = torch.cumsum(betas, axis=0)
     cummulative_alphas = 1 - cummulative_betas
 
@@ -52,19 +61,20 @@ def generate_noised_samples(
     sqrt_cummulative_betas = torch.sqrt(cummulative_betas)
 
     # TODO: codes for test.
-    sqrt_cummulative_alphas = torch.ones_like(x_0) * sqrt_cummulative_alphas[-1]
-    sqrt_cummulative_betas = torch.ones_like(noise) * sqrt_cummulative_betas[-1]
+    sqrt_cummulative_alphas = torch.ones_like(x_0) * sqrt_cummulative_alphas[step]
+    sqrt_cummulative_betas = torch.ones_like(noise) * sqrt_cummulative_betas[step]
 
-    return sqrt_cummulative_alphas * x_0 + sqrt_cummulative_betas * noise
+    return sqrt_cummulative_alphas * x_0 + sqrt_cummulative_betas * noise, noise
 
 
 if __name__ == "__main__":
 
-    train_data, _ = generate_dataset()
+    train_dataloader, _ = generate_dataloader()
 
-    sample = next(iter(train_data))[0]
+    batch_sample = next(iter(train_dataloader))[0]
 
-    output = generate_noised_samples(sample, steps=10)
-
-    print(output.shape)
-    show_images([sample, output])
+    images = []
+    for step in range(0, 10):
+        output, noise = generate_noised_samples(batch_sample, step=step, total_steps=50)
+        images.append(output[0])
+    show_images(images)
