@@ -8,6 +8,7 @@ from util import show_images
 def linear_beta_schedule(steps, start=0.0001, end=0.02):
     return torch.linspace(start, end, steps)
 
+
 def generate_noised_samples(
     x_0: torch.Tensor, steps: int, beta_start: float = 0.0001, beta_end: float = 0.02
 ):
@@ -30,11 +31,11 @@ def generate_noised_samples(
 
     closed form for forward process
         q(x_t | x_0) = N(
-            x_t; 
+            x_t;
             sqrt(\bar{alpha})x_0,  # mean
             (1 - \bar{alpha_t})I   # variance
         )
-        where 
+        where
             alpha_t = 1 - beta_t
             \bar = \Pi_{x=1}^t \alpha_s
 
