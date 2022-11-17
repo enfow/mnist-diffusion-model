@@ -11,7 +11,7 @@ def linear_beta_schedule(steps, start=0.0001, end=0.02):
     return torch.linspace(start, end, steps)
 
 
-def generate_noised_samples(
+def generate_noised_sample(
     x_0: torch.Tensor,
     step: int,
     total_steps: int,
@@ -75,6 +75,6 @@ if __name__ == "__main__":
 
     images = []
     for step in range(0, 10):
-        output, noise = generate_noised_samples(batch_sample, step=step, total_steps=50)
+        output, noise = generate_noised_sample(batch_sample, step=step, total_steps=50)
         images.append(output[0])
     show_images(images)
