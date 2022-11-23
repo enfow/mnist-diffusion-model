@@ -75,6 +75,8 @@ if __name__ == "__main__":
 
     images = []
     for step in range(0, 10):
-        output, noise = generate_noised_sample(batch_sample, step=step, total_steps=50)
+        output, noise = generate_noised_sample(batch_sample, step=step, total_steps=10)
         images.append(output[0])
+
+    images.append(noise[0])
     show_images(images)

@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import List
 
 import matplotlib.pyplot as plt
 import torch
@@ -15,6 +15,9 @@ def show_images(imgs: List[torch.Tensor]):
     for i, img in enumerate(imgs):
         plt.subplot(1, n_imgs, i + 1)
         plt.imshow(img.reshape(28, 28))
+        # remove axis ticks
+        plt.xticks([])
+        plt.yticks([])
 
     plt.show()
 
